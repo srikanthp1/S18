@@ -72,7 +72,7 @@ class ExpandingBlock(nn.Module):
         # if self.decode_oppool == 'upsample':
         #     x = F.upsample(x, scale_factor=2, mode='nearest')
         
-        # concatenate the skip connection
+        # # concatenate the skip connection
         # x = torch.cat((x, skip), dim=1)
         
         return x
@@ -90,7 +90,11 @@ class UNet(nn.Module):
         self.expand1 = ExpandingBlock(512, 256, decode_oppool)
         self.expand2 = ExpandingBlock(256, 128, decode_oppool)
         self.expand3 = ExpandingBlock(128, 64, decode_oppool)
-        
+
+        # self.expand1 = ExpandingBlock(256, 128, decode_oppool)
+        # self.expand2 = ExpandingBlock(128, 64, decode_oppool)
+        # self.expand3 = ExpandingBlock(64, 64, decode_oppool)
+
         self.final_conv = nn.Conv2d(64, out_channels, kernel_size=1)
         
     def forward(self, x):
@@ -100,15 +104,9 @@ class UNet(nn.Module):
         x, skip3 = self.contract3(x)
         x, _ = self.contract4(x)
 
-        
-        # if self.decode_oppool == 'transpose':
-        #     x = F.relu(self.upsample(x))
-        # if self.decode_oppool == 'upsample':
-        #     x = F.upsample(x, scale_factor=2, mode='nearest')
-        # x = torch.cat((x, skip3), dim=1)
-
+    
         # Expanding path
-        x = self.expand1(_, skip3)
+        x = self.expand1(x, skip3)
         x = self.expand2(x, skip2)
         x = self.expand3(x, skip1)
         x = self.final_conv(x)

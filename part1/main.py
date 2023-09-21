@@ -162,11 +162,11 @@ class OxfordPetDataset(Dataset):
         return image, mask
     
 
-train_transform = transforms.Compose([transforms.Resize((256, 256)),
+train_transform = transforms.Compose([transforms.Resize((240, 240)),
                                 transforms.ToTensor(),
                                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))])
 target_transform = transforms.Compose([transforms.PILToTensor(),     
-                                       transforms.Resize((256, 256)),     
+                                       transforms.Resize((240, 240)),     
                                        transforms.Lambda(lambda x: (x-1).squeeze().type(torch.LongTensor)) ])
 
 
