@@ -73,7 +73,7 @@ class ExpandingBlock(nn.Module):
         #     x = F.upsample(x, scale_factor=2, mode='nearest')
         
         # concatenate the skip connection
-        x = torch.cat((x, skip), dim=1)
+        # x = torch.cat((x, skip), dim=1)
         
         return x
 
