@@ -65,7 +65,7 @@ class ExpandingBlock(nn.Module):
         if self.decode_oppool == 'transpose':
             x = F.relu(self.upsample(x))
         if self.decode_oppool == 'upsample':
-            F.upsample(x, scale_factor=2, mode='nearest')
+            x = F.upsample(x, scale_factor=2, mode='nearest')
         
         # concatenate the skip connection
         x = torch.cat((x, skip), dim=1)
@@ -98,3 +98,6 @@ class UNet(nn.Module):
         x = self.expand1(x, skip3)
         x = self.expand2(x, skip2)
         x = self.expand3(x, skip1)
+        x = self.final_conv(x)
+        
+        return x

@@ -188,7 +188,7 @@ params = {
     "lr": 0.001,
     "batch_size": 32,
     "num_workers": 2,
-    "epochs": 15,
+    "epochs": 25,
 }
 
 train_loader = DataLoader(
@@ -260,7 +260,7 @@ n_epochs = 25
 for epoch in range(1, n_epochs+1):
     train_loss = 0.0
     for data in train_loader:
-        print(data)
+        # print(data)
         images, masks = data[0].to(device), data[1].to(device)
         optimizer.zero_grad()
         outputs = model(images)
