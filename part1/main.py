@@ -244,13 +244,13 @@ decode_arg = sys.argv[2]
 
 loss_func = sys.argv[3]
 
-model = UNet(3, 37, encode_arg, decode_arg)
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+model = UNet(3, 37, encode_arg, decode_arg).to(device)
 
 if loss_func == 'bce':
     criterion = nn.CrossEntropyLoss(ignore_index=255)
 elif loss_func == 'diceloss':
     criterion = MultiClassDiceLoss(37)
-
 # specify loss function
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
@@ -260,7 +260,7 @@ n_epochs = 25
 for epoch in range(1, n_epochs+1):
     train_loss = 0.0
     for data in train_loader:
-        images, masks = data
+        images, masks = data.to(device)
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs, masks)
