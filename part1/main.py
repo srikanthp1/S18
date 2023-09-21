@@ -274,8 +274,10 @@ for epoch in range(1, n_epochs+1):
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
+        
+        if i%15 ==0:
+            print('batch number:', str(i), ' : ', loss.item())
         i=i+1
-        print('batch number:', str(i), ' : ', loss.item())
             
     # print avg training statistics 
     train_loss = train_loss/len(train_loader)
