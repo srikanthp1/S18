@@ -75,6 +75,7 @@ class ExpandingBlock(nn.Module):
 class UNet(nn.Module):
     def __init__(self, in_channels, out_channels, encode_pool='maxpool', decode_oppool='upsample'):
         super(UNet, self).__init__()
+        self.decode_oppool = decode_oppool
         
         self.contract1 = ContractingBlock(in_channels, 64, encode_pool)
         self.contract2 = ContractingBlock(64, 128, encode_pool)
@@ -93,7 +94,14 @@ class UNet(nn.Module):
         x, skip2 = self.contract2(x)
         x, skip3 = self.contract3(x)
         x, _ = self.contract4(x)
+
         
+        if self.decode_oppool == 'transpose':
+            x = F.relu(self.upsample(x))
+        if self.decode_oppool == 'upsample':
+            x = F.upsample(x, scale_factor=2, mode='nearest')
+        x = torch.cat((x, skip3), dim=1)
+
         # Expanding path
         x = self.expand1(_, skip3)
         x = self.expand2(x, skip2)
