@@ -106,7 +106,7 @@ class UNet(nn.Module):
 
     
         # Expanding path
-        x = self.expand1(x, skip3)
+        x = self.expand1(_, skip3)
         x = self.expand2(x, skip2)
         x = self.expand3(x, skip1)
         x = self.final_conv(x)
