@@ -54,6 +54,11 @@ class ExpandingBlock(nn.Module):
             self.upsample = nn.ConvTranspose2d(out_channels, out_channels // 2, kernel_size=2, stride=2)
             
     def forward(self, x, skip):
+        if self.decode_oppool == 'transpose':
+            x = F.relu(self.upsample(x))
+        if self.decode_oppool == 'upsample':
+            x = F.upsample(x, scale_factor=2, mode='nearest')
+        x = torch.cat((x, skip), dim=1)
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu1(x)
@@ -62,10 +67,10 @@ class ExpandingBlock(nn.Module):
         x = self.bn2(x)
         x = self.relu2(x)
         
-        if self.decode_oppool == 'transpose':
-            x = F.relu(self.upsample(x))
-        if self.decode_oppool == 'upsample':
-            x = F.upsample(x, scale_factor=2, mode='nearest')
+        # if self.decode_oppool == 'transpose':
+        #     x = F.relu(self.upsample(x))
+        # if self.decode_oppool == 'upsample':
+        #     x = F.upsample(x, scale_factor=2, mode='nearest')
         
         # concatenate the skip connection
         x = torch.cat((x, skip), dim=1)
@@ -103,7 +108,7 @@ class UNet(nn.Module):
         # x = torch.cat((x, skip3), dim=1)
 
         # Expanding path
-        x = self.expand1(_, skip3)
+        x = self.expand1(x, skip3)
         x = self.expand2(x, skip2)
         x = self.expand3(x, skip1)
         x = self.final_conv(x)
