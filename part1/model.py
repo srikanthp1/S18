@@ -51,7 +51,7 @@ class ExpandingBlock(nn.Module):
         self.relu2 = nn.ReLU(inplace=True)
         
         if self.decode_oppool == 'transpose':
-            self.upsample = nn.ConvTranspose2d(out_channels, out_channels // 2, kernel_size=2, stride=2)
+            self.upsample = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)
             
     def forward(self, x, skip):
         if self.decode_oppool == 'transpose':
