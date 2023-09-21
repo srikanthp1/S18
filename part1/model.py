@@ -52,12 +52,16 @@ class ExpandingBlock(nn.Module):
         
         if self.decode_oppool == 'transpose':
             self.upsample = nn.ConvTranspose2d(in_channels, in_channels // 2, kernel_size=2, stride=2)
+        elif self.decode_oppool == 'upsample':
+            self.upsampleconv = nn.Conv2d(in_channels, in_channels // 2, kernel_size=1)
             
+
     def forward(self, x, skip):
         if self.decode_oppool == 'transpose':
             x = F.relu(self.upsample(x))
         if self.decode_oppool == 'upsample':
-            x = F.upsample(x, scale_factor=2, mode='nearest')
+            x = F.upsample(x, scale_factor=2, mode='bilinear')
+            x = self.upsampleconv(x)
         x = torch.cat((x, skip), dim=1)
         x = self.conv1(x)
         x = self.bn1(x)
