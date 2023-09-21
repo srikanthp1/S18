@@ -260,7 +260,8 @@ n_epochs = 25
 for epoch in range(1, n_epochs+1):
     train_loss = 0.0
     for data in train_loader:
-        images, masks = data.to(device)
+        print(data)
+        images, masks = data[0].to(device), data[1].to(device)
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs, masks)
