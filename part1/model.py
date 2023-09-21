@@ -81,7 +81,7 @@ class UNet(nn.Module):
         self.contract2 = ContractingBlock(64, 128, encode_pool)
         self.contract3 = ContractingBlock(128, 256, encode_pool)
         self.contract4 = ContractingBlock(256, 512, encode_pool)
-        
+
         self.expand1 = ExpandingBlock(512, 256, decode_oppool)
         self.expand2 = ExpandingBlock(256, 128, decode_oppool)
         self.expand3 = ExpandingBlock(128, 64, decode_oppool)
@@ -96,14 +96,14 @@ class UNet(nn.Module):
         x, _ = self.contract4(x)
 
         
-        if self.decode_oppool == 'transpose':
-            x = F.relu(self.upsample(x))
-        if self.decode_oppool == 'upsample':
-            x = F.upsample(x, scale_factor=2, mode='nearest')
-        x = torch.cat((x, skip3), dim=1)
+        # if self.decode_oppool == 'transpose':
+        #     x = F.relu(self.upsample(x))
+        # if self.decode_oppool == 'upsample':
+        #     x = F.upsample(x, scale_factor=2, mode='nearest')
+        # x = torch.cat((x, skip3), dim=1)
 
         # Expanding path
-        x = self.expand1(_, skip3)
+        x = self.expand1(x, skip3)
         x = self.expand2(x, skip2)
         x = self.expand3(x, skip1)
         x = self.final_conv(x)

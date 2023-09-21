@@ -245,12 +245,12 @@ decode_arg = sys.argv[2]
 loss_func = sys.argv[3]
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-model = UNet(3, 37, encode_arg, decode_arg).to(device)
+model = UNet(3, 3, encode_arg, decode_arg).to(device)
 
 if loss_func == 'bce':
     criterion = nn.CrossEntropyLoss(ignore_index=255)
 elif loss_func == 'diceloss':
-    criterion = MultiClassDiceLoss(37)
+    criterion = MultiClassDiceLoss(3)
 # specify loss function
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
