@@ -71,7 +71,7 @@ def merge_trainval_test(filepath):
 
 
 dataset_directory = os.path.join("/kaggle/working/dataset")
-os.mkdir(dataset_directory)
+# os.mkdir(dataset_directory)
 
 filepath = os.path.join(dataset_directory, "images.tar.gz")
 # download_url(
