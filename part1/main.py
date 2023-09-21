@@ -1,5 +1,9 @@
 import sys 
 
+import warnings
+
+# Suppress all user warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 
 import numpy as np
 import pandas as pd
@@ -259,15 +263,19 @@ n_epochs = 25
 
 for epoch in range(1, n_epochs+1):
     train_loss = 0.0
+    i=0
     for data in train_loader:
         # print(data)
+        
         images, masks = data[0].to(device), data[1].to(device)
         optimizer.zero_grad()
         outputs = model(images)
         loss = criterion(outputs, masks)
         loss.backward()
         optimizer.step()
-        train_loss += loss.item()*images.size(0)
+        train_loss += loss.item()
+        i=i+1
+        print('batch number:', str(i), ' : ', loss.item())
             
     # print avg training statistics 
     train_loss = train_loss/len(train_loader)
