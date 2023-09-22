@@ -238,7 +238,7 @@ class MultiClassDiceLoss(nn.Module):
         # dice_loss = 1.0 - torch.mean(torch.stack(dice_coeffs))
         eps = 1e-5
 
-        true_1_hot = torch.eye(self.num_classes)[target.squeeze(1)]
+        true_1_hot = torch.eye(self.num_classes)[target.squeeze(1).cpu()]
         true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
         probas = F.softmax(input, dim=1)
         true_1_hot = true_1_hot.type(input.type())
