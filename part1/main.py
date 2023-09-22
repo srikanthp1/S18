@@ -75,19 +75,19 @@ def merge_trainval_test(filepath):
 
 
 dataset_directory = os.path.join("/kaggle/working/dataset")
-os.mkdir(dataset_directory)
+# os.mkdir(dataset_directory)
 
 filepath = os.path.join(dataset_directory, "images.tar.gz")
-download_url(
-    url="https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz", filepath=filepath,
-)
-extract_archive(filepath)
+# download_url(
+#     url="https://www.robots.ox.ac.uk/~vgg/data/pets/data/images.tar.gz", filepath=filepath,
+# )
+# extract_archive(filepath)
 
 filepath = os.path.join(dataset_directory, "annotations.tar.gz")
-download_url(
-    url="https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz", filepath=filepath,
-)
-extract_archive(filepath)
+# download_url(
+#     url="https://www.robots.ox.ac.uk/~vgg/data/pets/data/annotations.tar.gz", filepath=filepath,
+# )
+# extract_archive(filepath)
 
 filepath = os.path.join(dataset_directory)
 merge_trainval_test(filepath)
