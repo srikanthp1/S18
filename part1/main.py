@@ -263,18 +263,18 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 model = UNet(3, 3, encode_arg, decode_arg).to(device)
 
 if loss_func == 'bce':
-    criterion = nn.CrossEntropyLoss(ignore_index=255)
+    criterion = nn.CrossEntropyLoss()
 elif loss_func == 'diceloss':
     criterion = MultiClassDiceLoss(3)
 # specify loss function
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # number of epochs to train the model
-n_epochs = 25
+n_epochs = 15
 
 for epoch in range(1, n_epochs+1):
     train_loss = 0.0
-    i=0
+    # i=0
     for data in train_loader:
         
         images, masks = data[0].to(device), data[1].to(device)
