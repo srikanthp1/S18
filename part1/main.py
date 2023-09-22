@@ -224,20 +224,31 @@ class MultiClassDiceLoss(nn.Module):
         self.num_classes = num_classes
 
     def forward(self, input, target):
-        # Convert class labels to one-hot encoding
-        target_one_hot = F.one_hot(target, num_classes=self.num_classes).permute(0, 3, 1, 2).float()
+        # # Convert class labels to one-hot encoding
+        # target_one_hot = F.one_hot(target, num_classes=self.num_classes).permute(0, 3, 1, 2).float()
 
-        # Calculate Dice coefficient for each class
-        dice_coeffs = []
-        for class_idx in range(self.num_classes):
-            intersection = torch.sum(input[:, class_idx, :, :] * target_one_hot[:, class_idx, :, :])
-            union = torch.sum(input[:, class_idx, :, :] + target_one_hot[:, class_idx, :, :])
-            dice_coeffs.append((2.0 * intersection + 1e-5) / (union + 1e-5))
+        # # Calculate Dice coefficient for each class
+        # dice_coeffs = []
+        # for class_idx in range(self.num_classes):
+        #     intersection = torch.sum(input[:, class_idx, :, :] * target_one_hot[:, class_idx, :, :])
+        #     union = torch.sum(input[:, class_idx, :, :] + target_one_hot[:, class_idx, :, :])
+        #     dice_coeffs.append((2.0 * intersection + 1e-5) / (union + 1e-5))
 
-        # Calculate the average Dice loss
-        dice_loss = 1.0 - torch.mean(torch.stack(dice_coeffs))
+        # # Calculate the average Dice loss
+        # dice_loss = 1.0 - torch.mean(torch.stack(dice_coeffs))
+        eps = 1e-5
 
-        return dice_loss
+        true_1_hot = torch.eye(self.num_classes)[target.squeeze(1)]
+        true_1_hot = true_1_hot.permute(0, 3, 1, 2).float()
+        probas = F.softmax(input, dim=1)
+        true_1_hot = true_1_hot.type(input.type())
+        dims = (0,) + tuple(range(2, target.ndimension()))
+        intersection = torch.sum(probas * true_1_hot, dims)
+        cardinality = torch.sum(probas + true_1_hot, dims)
+        dice_loss = (2. * intersection / (cardinality + eps)).mean()
+        return (1 - dice_loss)
+
+        # return dice_loss
 
 
 from model import UNet
@@ -265,7 +276,6 @@ for epoch in range(1, n_epochs+1):
     train_loss = 0.0
     i=0
     for data in train_loader:
-        # print(data)
         
         images, masks = data[0].to(device), data[1].to(device)
         optimizer.zero_grad()
@@ -274,10 +284,7 @@ for epoch in range(1, n_epochs+1):
         loss.backward()
         optimizer.step()
         train_loss += loss.item()
-        
-        if i%15 ==0:
-            print('batch number:', str(i), ' : ', loss.item())
-        i=i+1
+
             
     # print avg training statistics 
     train_loss = train_loss/len(train_loader)
@@ -285,7 +292,7 @@ for epoch in range(1, n_epochs+1):
         epoch, 
         train_loss
         ))
-    
+torch.save(model.state_dict(), f'model_{sys.argv[1]}_{sys.argv[2]}_{sys.argv[3]}.pth')
 
 # python main.py maxpool transpose bce
 # python main.py maxpool transpose diceloss
